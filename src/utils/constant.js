@@ -10,7 +10,14 @@ const FONTS = {
     montserratSemiBold: 'Montserrat-SemiBold'
 }
 
+const IMAGES = {
+    facebook: require('../assets/Images/facebook.png'),
+    instagram: require('../assets/Images/instagram.png'),
+    twitter: require('../assets/Images/twitter.png'),
+}
+
 export {
     Colors,
-    FONTS
+    FONTS,
+    IMAGES
 }

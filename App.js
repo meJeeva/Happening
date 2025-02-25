@@ -6,7 +6,7 @@ import { Text, ThemeProvider, createTheme } from '@rneui/themed';
 
 const theme = createTheme({
   lightColors: {
-
+    violet: '#4B0082'
   },
   darkColors: {
 

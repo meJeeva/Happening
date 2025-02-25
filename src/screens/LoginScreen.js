@@ -1,13 +1,14 @@
-import { StyleSheet, TextInput, View } from 'react-native'
+import { Image, StyleSheet, TextInput, View } from 'react-native'
 import React from 'react'
 import { CustomText } from '../components/Custom'
-import { Text, useTheme } from '@rneui/themed'
-import { FONTS } from '../utils/constant'
+import { useTheme } from '@rneui/themed'
+import { FONTS, IMAGES } from '../utils/constant'
 import { TouchableOpacity } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
 
 const LoginScreen = () => {
-
-    const { theme } = useTheme()
+    const { theme } = useTheme();
+    const navigation = useNavigation();
 
     return (
         <View className='flex-1 p-5'>
@@ -30,15 +31,32 @@ const LoginScreen = () => {
                         fontFamily: FONTS.montserratMedium
                     }}
                 />
-                <TouchableOpacity className='bg-teal-500 p-3 rounded-full mt-5 items-center'>
-                    <CustomText>Login</CustomText>
+                <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')} className='bg-teal-500 p-3 rounded-full mt-5 items-center'>
+                    <CustomText className='text-white'>Login</CustomText>
                 </TouchableOpacity>
-
                 <CustomText className='mt-5 text-right text-green-800'>Send OTP</CustomText>
-
                 <CustomText className='text-gray-400 text-base text-center mt-10'>or</CustomText>
-
-                <CustomText className='text-center text-gray-500 mt-8'>Sign in with other accounts</CustomText>
+                <CustomText className='text-center text-gray-500 mt-8 mb-8'>Sign in with other accounts</CustomText>
+                <View className='mt-10 items-center flex-row justify-center gap-4'>
+                    <TouchableOpacity>
+                        <Image
+                            source={IMAGES.instagram}
+                            className='h-9 w-9 rounded-full'
+                        />
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                        <Image
+                            source={IMAGES.facebook}
+                            className='h-9 w-9 rounded-full'
+                        />
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                        <Image
+                            source={IMAGES.twitter}
+                            className='h-9 w-9 rounded-full'
+                        />
+                    </TouchableOpacity>
+                </View>
             </View>
         </View>
     )
