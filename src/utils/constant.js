@@ -16,8 +16,11 @@ const IMAGES = {
     twitter: require('../assets/Images/twitter.png'),
 }
 
+const CURRENCY_SYMBOL = "₹";
+
 export {
     Colors,
     FONTS,
-    IMAGES
+    IMAGES,
+    CURRENCY_SYMBOL
 }

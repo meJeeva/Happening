@@ -3,15 +3,14 @@ import {
   Image,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {CustomText} from '../components/Custom';
+import React, { useEffect, useState } from 'react';
+import { CustomText } from '../components/Custom';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {CheckBox, Dialog, useTheme} from '@rneui/themed';
-import {FONTS} from '../utils/constant';
+import { CheckBox, Dialog, useTheme } from '@rneui/themed';
+import { FONTS } from '../utils/constant';
 import CustomToggle from '../components/CustomToggle';
 import Animated, {
   useSharedValue,
@@ -19,6 +18,7 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { useNavigation } from '@react-navigation/native';
 
 const TYPES = [
   {
@@ -151,25 +151,34 @@ const chunkArray = (arr, chunkSize) => {
 
 const HomeScreen = () => {
   const [state, setState] = useState({
-    selectedType: {title: '', value: ''},
+    selectedType: { title: '', value: '' },
     showSelectLocationModal: false,
     selectedLocation: 0,
   });
 
-  const {theme} = useTheme();
+  const { theme } = useTheme();
+  const { navigate } = useNavigation();
 
   const translateY = useSharedValue(300);
 
   useEffect(() => {
+    initialFunction();
+  }, []);
+
+  useEffect(() => {
     if (state.showSelectLocationModal) {
-      translateY.value = withSpring(0, {damping: 15});
+      translateY.value = withSpring(0, { damping: 15 });
     } else {
-      translateY.value = withSpring(600, {damping: 15});
+      translateY.value = withSpring(600, { damping: 15 });
     }
   }, [state.showSelectLocationModal]);
 
+  const initialFunction = () => {
+    setState(prev => ({ ...prev, selectedType: TYPES[0] }))
+  }
+
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{translateY: translateY.value}],
+    transform: [{ translateY: translateY.value }],
   }));
 
   const toggleDialog = () => {
@@ -201,7 +210,7 @@ const HomeScreen = () => {
       <View>
         <FlatList
           data={TYPES}
-          renderItem={({item, index}) => (
+          renderItem={({ item, index }) => (
             <TouchableOpacity
               onPress={() =>
                 setState(prev => ({
@@ -213,115 +222,113 @@ const HomeScreen = () => {
                             ${index === 0 ? 'border-l rounded-l-lg' : ''}
                             ${index === 2 ? 'rounded-r-lg' : ''}
                             ${index === 1 ? 'px-5' : ''}
-                            ${
-                              state.selectedType.value === item.value
-                                ? 'border-violet-600'
-                                : ''
-                            }
+                            ${state.selectedType.value === item.value
+                  ? 'border-violet-600 bg-violet-100'
+                  : ''
+                }
                         `}
               key={item.value}>
               <CustomText
                 className={`
-                                ${
-                                  state.selectedType.value === item.value
-                                    ? 'text-violet-600'
-                                    : ''
-                                }
+                                ${state.selectedType.value === item.value
+                    ? 'text-violet-600'
+                    : ''
+                  }
                             `}>
                 {item.title}
               </CustomText>
             </TouchableOpacity>
           )}
           keyExtractor={(item, index) => index.toString()}
-          contentContainerStyle={{flexGrow: 1, justifyContent: 'space-evenly'}}
+          contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-evenly' }}
           className="mt-4"
           horizontal
         />
       </View>
 
-<ScrollView>
-<View className="mt-5">
-        <CustomText className="text-lg mb-2">Pick your category</CustomText>
-        {CATEGORIES && CATEGORIES.length > 0 && (
+      <ScrollView>
+        <View className="mt-5">
+          <CustomText className="text-lg mb-2">Pick your category</CustomText>
+          {CATEGORIES && CATEGORIES.length > 0 && (
+            <FlatList
+              data={chunkArray(CATEGORIES, 2)}
+              renderItem={({ item }) => (
+                <View
+                  style={{
+                    justifyContent: 'space-between',
+                    backgroundColor: '#f0f0f0',
+                    borderRadius: 8,
+                  }}
+                  className="p-2">
+                  {item.map(subItem => (
+                    <View
+                      key={subItem.id}
+                      className=" bg-gray-200 rounded-lg mb-5">
+                      <Image
+                        source={{ uri: subItem.image }}
+                        className="h-16 w-20"
+                        style={{
+                          borderTopLeftRadius: 10,
+                          borderTopRightRadius: 10,
+                        }}
+                      />
+                      <CustomText className="text-center text-xs py-1">
+                        {subItem.title}
+                      </CustomText>
+                    </View>
+                  ))}
+                </View>
+              )}
+              horizontal
+              keyExtractor={(_, index) => index.toString()}
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{
+                paddingVertical: 10,
+              }}
+            />
+          )}
+        </View>
+
+        <View className="mt-2">
+          <CustomText className="text-lg mb-2" onPress={() => navigate('SelectSeats')}>Most Popular</CustomText>
+
           <FlatList
-            data={chunkArray(CATEGORIES, 2)}
-            renderItem={({item}) => (
-              <View
-                style={{
-                  justifyContent: 'space-between',
-                  backgroundColor: '#f0f0f0',
-                  borderRadius: 8,
-                }}
-                className="p-2">
-                {item.map(subItem => (
-                  <View
-                    key={subItem.id}
-                    className=" bg-gray-200 rounded-lg mb-5">
-                    <Image
-                      source={{uri: subItem.image}}
-                      className="h-16 w-20"
-                      style={{
-                        borderTopLeftRadius: 10,
-                        borderTopRightRadius: 10,
-                      }}
-                    />
-                    <CustomText className="text-center text-xs py-1">
-                      {subItem.title}
-                    </CustomText>
-                  </View>
-                ))}
-              </View>
+            data={MOST_POPULAR}
+            renderItem={({ item, index }) => (
+              <TouchableOpacity key={item.id}>
+                <Image
+                  source={{ uri: item.image }}
+                  className="w-64 mr-5 rounded-md h-40"
+                />
+              </TouchableOpacity>
             )}
             horizontal
-            keyExtractor={(_, index) => index.toString()}
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{
-              paddingVertical: 10,
-            }}
+            className="mt-3"
           />
-        )}
-      </View>
+        </View>
 
-      <View className="mt-2">
-        <CustomText className="text-lg mb-2">Most Popular</CustomText>
+        <View className="mt-5">
+          <CustomText className="text-lg mb-2">Resume you booking</CustomText>
 
-        <FlatList
-          data={MOST_POPULAR}
-          renderItem={({item, index}) => (
-            <TouchableOpacity key={item.id}>
-              <Image
-                source={{uri: item.image}}
-                className="w-64 mr-5 rounded-md h-40"
-              />
-            </TouchableOpacity>
-          )}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          className="mt-3"
-        />
-      </View>
-
-      <View className="mt-5">
-        <CustomText className="text-lg mb-2">Resume you booking</CustomText>
-
-        <FlatList
-          data={BOOKING}
-          renderItem={({item, index}) => (
-            <TouchableOpacity>
-              <Image
-                source={{uri: item.image}}
-                className="w-44 h-32 mr-5 rounded-md"
-              />
-              <TouchableOpacity className='bg-white absolute rounded-full right-5 m-1'>
-                <AntDesign name="close" size={16} />
+          <FlatList
+            data={BOOKING}
+            renderItem={({ item, index }) => (
+              <TouchableOpacity>
+                <Image
+                  source={{ uri: item.image }}
+                  className="w-44 h-32 mr-5 rounded-md"
+                />
+                <TouchableOpacity className='bg-white absolute rounded-full right-5 m-1'>
+                  <AntDesign name="close" size={16} />
+                </TouchableOpacity>
               </TouchableOpacity>
-            </TouchableOpacity>
-          )}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-        />
-      </View>
-</ScrollView>
+            )}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          />
+        </View>
+      </ScrollView>
 
       {/* dialog */}
       <Dialog
@@ -365,7 +372,7 @@ const HomeScreen = () => {
           </View>
           <CheckBox
             checked={state.selectedLocation === 0}
-            onPress={() => setState(prev => ({...prev, selectedLocation: 0}))}
+            onPress={() => setState(prev => ({ ...prev, selectedLocation: 0 }))}
             iconType="material-community"
             checkedIcon="radiobox-marked"
             uncheckedIcon="radiobox-blank"
@@ -376,7 +383,7 @@ const HomeScreen = () => {
         <CustomText className="text-lg">Recent Location</CustomText>
         <FlatList
           data={RECENT_LOCATIONS}
-          renderItem={({item}) => {
+          renderItem={({ item }) => {
             return (
               <TouchableOpacity
                 onPress={toggleDialog}
@@ -390,7 +397,7 @@ const HomeScreen = () => {
                 <CheckBox
                   checked={state.selectedLocation === 0}
                   onPress={() =>
-                    setState(prev => ({...prev, selectedLocation: 0}))
+                    setState(prev => ({ ...prev, selectedLocation: 0 }))
                   }
                   iconType="material-community"
                   checkedIcon="radiobox-marked"
